@@ -55,8 +55,10 @@ RUN groupadd \
 
 # Install Helm CLI
 RUN wget -q -O apache-jena.tar.gz https://apache.osuosl.org/jena/binaries/apache-jena-3.16.0.tar.gz \
-    && tar xvf apache-jena.tar.gz \
+    && mkdir -p /usr/local/bin/apache-jena \
+    && tar xvf apache-jena.tar.gz -C /usr/local/bin/apache-jena --strip-components=1 \
     && rm apache-jena.tar.gz
+ENV PATH=$PATH:/usr/local/bin/apache-jena/bin
 
 # Get values from docker build CLI args
 ARG IMAGE_SOURCECODE_GIT_REPO_URL=
