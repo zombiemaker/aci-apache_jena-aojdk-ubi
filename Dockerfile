@@ -8,35 +8,37 @@ ARG USER_GID=${USER_UID}
 # Keep every item on a separate line to make version control code change review easier
 
 # Add CentOS repos to get additional packages
+ARG CENTOS_STREAM_URL=http://mirror.centos.org/centos/8-stream/
 RUN echo "[centos-8-stream-appstream]" > /etc/yum.repos.d/centos.repo \
     && echo "name=CentOS-8 Stream - appStream" >> /etc/yum.repos.d/centos.repo \
-    && echo "baseurl=http://www.gtlib.gatech.edu/pub/centos/8-stream/AppStream/x86_64/os" >> /etc/yum.repos.d/centos.repo \
+    && echo "baseurl=$CENTOS_STREAM_URL/AppStream/x86_64/os" >> /etc/yum.repos.d/centos.repo \
     && echo "enabled=1" >> /etc/yum.repos.d/centos.repo \
     && echo "gpgcheck=0" >> /etc/yum.repos.d/centos.repo \
     && echo "[centos-8-stream-BaseOS]" >> /etc/yum.repos.d/centos.repo \
     && echo "name=CentOS-8 Stream - BaseOS" >> /etc/yum.repos.d/centos.repo \
-    && echo "baseurl=http://www.gtlib.gatech.edu/pub/centos/8-stream/BaseOS/x86_64/os" >> /etc/yum.repos.d/centos.repo \
+    && echo "baseurl=$CENTOS_STREAM_URL/BaseOS/x86_64/os" >> /etc/yum.repos.d/centos.repo \
     && echo "enabled=1" >> /etc/yum.repos.d/centos.repo \
     && echo "gpgcheck=0" >> /etc/yum.repos.d/centos.repo \
     && echo "[centos-8-stream-PowerTools]" >> /etc/yum.repos.d/centos.repo \
     && echo "name=CentOS-8 Stream - PowerTools" >> /etc/yum.repos.d/centos.repo \
-    && echo "baseurl=http://www.gtlib.gatech.edu/pub/centos/8-stream/PowerTools/x86_64/os/" >> /etc/yum.repos.d/centos.repo \
+    && echo "baseurl=$CENTOS_STREAM_URL/PowerTools/x86_64/os/" >> /etc/yum.repos.d/centos.repo \
     && echo "enabled=1" >> /etc/yum.repos.d/centos.repo \
     && echo "gpgcheck=0" >> /etc/yum.repos.d/centos.repo \
     && echo "[centos-8-stream-extras]" >> /etc/yum.repos.d/centos.repo \
     && echo "name=CentOS-8 Stream - extras" >> /etc/yum.repos.d/centos.repo \
-    && echo "baseurl=http://www.gtlib.gatech.edu/pub/centos/8-stream/extras/x86_64/os/" >> /etc/yum.repos.d/centos.repo \
+    && echo "baseurl=$CENTOS_STREAM_URL/extras/x86_64/os/" >> /etc/yum.repos.d/centos.repo \
     && echo "enabled=1" >> /etc/yum.repos.d/centos.repo \
     && echo "gpgcheck=0" >> /etc/yum.repos.d/centos.repo \
     && echo "[centos-8-stream-HighAvailability]" >> /etc/yum.repos.d/centos.repo \
     && echo "name=CentOS-8 Stream - HighAvailability" >> /etc/yum.repos.d/centos.repo \
-    && echo "baseurl=http://www.gtlib.gatech.edu/pub/centos/8-stream/HighAvailability/x86_64/os/" >> /etc/yum.repos.d/centos.repo \
+    && echo "baseurl=$CENTOS_STREAM_URL/HighAvailability/x86_64/os/" >> /etc/yum.repos.d/centos.repo \
     && echo "enabled=1" >> /etc/yum.repos.d/centos.repo \
     && echo "gpgcheck=0" >> /etc/yum.repos.d/centos.repo \
     && microdnf install \
         sudo \
         vi \
         which \
+        shadow-utils \
     && microdnf clean all
 
 RUN groupadd \
@@ -104,6 +106,10 @@ LABEL \
 
 WORKDIR /
 COPY README.md entrypoint.sh image-info "/"
+RUN chmod 755 /entrypoint.sh
+
+VOLUME ["/home/${USERNAME}"]
+WORKDIR "/home/${USERNAME}"
 
 # Drop to non-root user
 USER ${USERNAME}
